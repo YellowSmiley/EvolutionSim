@@ -1,8 +1,6 @@
 // Globals:
 let entityId = 1;
-let plantsArray = []
-let preyArray = []
-let predatorArray = [];
+let organismsArray = [];
 const scene = {
   width: 800,
   height: 600
@@ -26,8 +24,56 @@ function pickRandomDirection() {
   return direction;
 }
 
+var rectA = { x: 2, y: 5, width: 6, height: 6 };
+var rectB = { x: 4, y: 10, width: 6, height: 6 };
+var area = { min: 0, max: 100 };
+
+var overlap = rectOverlap(rectA, rectB);
+alert("Does rectA and rectB overlap? " + overlap);
+
+if (overlap) {
+  if (rectA.y >= rectB.y) {
+    if (increaseY(rectA.width, rectB.y + rectB.height, area.max)) {
+      rectA.y = rectB.y + rectB.height + 1;
+    }
+    else if (rectA.y - rectB.height > area.min) {
+      rectB.y = rectA.y - rectB.height;
+    }
+  }
+  else {
+    if (increaseY(rectB.width, rectA.y + rectA.height, area.max)) {
+      rectB.y = rectA.y + rectA.height + 1;
+    }
+    else if (rectB.y - rectA.height > area.min) {
+      rectA.y = rectB.y - rectA.height;
+    }
+  }
+}
+
+alert("Does rectA and rectB overlap? " + rectOverlap(rectA, rectB));
+
+function increaseY(width, bottomEdge, Max) {
+  return (bottomEdge + width < Max);
+}
+
+function valueInRange(value, min, max) {
+
+  return (value <= max) && (value >= min);
+
+}
+
+function rectOverlap(A, B) {
+  var xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
+    valueInRange(B.x, A.x, A.x + A.width);
+
+  var yOverlap = valueInRange(A.y, B.y, B.y + B.height) ||
+    valueInRange(B.y, A.y, A.y + A.height);
+
+  return xOverlap && yOverlap;
+}
+
 //Game funcs
-function createArrayOfEntities(containerArray, amount, name, colour, speed, health, damage, sight, stealth, fertilityRate) {
+function addMultipleEntitiesToAnArray(containerArray, amount, name, colour, speed, health, damage, sight, stealth, fertilityRate) {
   for (i = 0; i < amount; i++) {
     let xDirection = pickRandomDirection();
     let yDirection = pickRandomDirection();
@@ -44,9 +90,16 @@ function createArrayOfEntities(containerArray, amount, name, colour, speed, heal
       gender = "male";
     } else {
       gender = "female";
-    }   
+    }
     let x = randomInt(20, scene.width - 20);
     let y = randomInt(20, scene.height - 20);
+    for (let arrayEntity of containerArray) {
+      if (x >= arrayEntity.x && x <= arrayEntity.x + arrayEntity.width && y >= arrayEntity.y && y <= arrayEntity.y + arrayEntity.height) {
+        console.log("Entity", entityId + ": x", x, "y", y, "hit Entity", arrayEntity);
+        x = randomInt(20, scene.width - 20);
+        y = randomInt(20, scene.height - 20);
+      }
+    }
     let entity = {
       id: entityId,
       name: name,
@@ -70,7 +123,7 @@ function createArrayOfEntities(containerArray, amount, name, colour, speed, heal
       stealth: stealth,
       fertile: true,
       fertilityRate: fertilityRate
-    }    
+    }
     containerArray.push(entity);
     //console.log("createObject() entity =", entity);
     entityId++;
@@ -91,32 +144,9 @@ function draw() {
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
 
-    // let testRect = {
-    //   x: 10,
-    //   y: 10,
-    //   colour: "red",
-    //   height: 10,
-    //   width: 10
-    // }
-
-    // let testArray = [];
-    // for (i = 0; i < 10; i++) {
-    //   testArray.push(testRect);
-    //   //console.log(testArray);
-    //   testRect.x = 10 * i;
-    // }
-
-    // for (i = 0; testArray.length; i++) {
-    //   console.log(testArray[i]);
-    //   ctx.fillStyle = testArray[i].colour;
-    //   ctx.fillRect(testArray[i].x, testArray[i].y * i, testArray[i].height, testArray[i].width);
-    // };    
-
-    createArrayOfEntities(plantsArray, 10, "plant", "green", 0, 100, 0, 0, 0, 1000);
-    createArrayOfEntities(preyArray, 10, "prey", "blue", 1, 100, 1, 10, 0, 1000);
-    createArrayOfEntities(predatorArray, 10, "predator", "red", 1, 100, 1, 10, 0, 1000);
-    drawObjects(ctx, plantsArray);
-    drawObjects(ctx, preyArray);
-    drawObjects(ctx, predatorArray);
+    addMultipleEntitiesToAnArray(organismsArray, 10, "plant", "green", 0, 100, 0, 0, 0, 1000);
+    addMultipleEntitiesToAnArray(organismsArray, 10, "prey", "blue", 1, 100, 1, 10, 0, 1000);
+    addMultipleEntitiesToAnArray(organismsArray, 10, "predator", "red", 1, 100, 1, 10, 0, 1000);
+    drawObjects(ctx, organismsArray);
   }
 }
