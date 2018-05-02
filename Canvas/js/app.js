@@ -15,13 +15,19 @@ function randomInt(min, max) {
 }
 
 function valueInRange(value, min, max) {
+  //console.log(value, min, max, (value <= max) && (value >= min))
   return (value <= max) && (value >= min);
 }
 
 //Game funcs
-function checkElementsAreOverlapping(A, B) {
-  const xOverlap = valueInRange(A.x, B.x, B.x + B.width) || valueInRange(B.x, A.x, A.x + A.width);
-  const yOverlap = valueInRange(A.y, B.y, B.y + B.height) || valueInRange(B.y, A.y, A.y + A.height);
+function checkElementsAreOverlapping(elementA, elementB) {
+  // console.log((elementA.x <= elementB.x &&
+  //   elementA.y <= elementB.y &&
+  //   elementA.x + elementA.x >= elementB.x &&
+  //   elementA.y + elementA.height >= elementB.y));
+
+  const xOverlap = valueInRange(elementA.x, elementB.x, elementB.x + elementB.width);
+  const yOverlap = valueInRange(elementA.y, elementB.y, elementB.y + elementB.height);
   return xOverlap && yOverlap;
 }
 
@@ -60,16 +66,16 @@ function addMultipleEntitiesToAnArray(containerArray, amount, name, colour, spee
     let y = randomInt(20, scene.height - 20);
     const height = 20;
     const width = 20;
-    for (let arrayEntity of containerArray) {
-      const rectA = { x: x, y: y, height: height, width: width };
-      const isOverlapping = checkElementsAreOverlapping(rectA, arrayEntity);
-      if (isOverlapping) {
-        //console.log("Entity", rectA, "overlapping Entity:", arrayEntity);
-        //TODO: Find better way of moving without potentially moving into the place of another entity
-        x = randomInt(20, scene.width - 20);
-        y = randomInt(20, scene.height - 20);
-      }
-    }
+    // for (let arrayEntity of containerArray) {
+    //   const rectA = { x: x, y: y, height: height, width: width };
+    //   const isOverlapping = checkElementsAreOverlapping(rectA, arrayEntity);
+    //   if (isOverlapping) {
+    //     //console.log("Entity", rectA, "overlapping Entity:", arrayEntity);
+    //     //TODO: Find better way of moving without potentially moving into the place of another entity
+    //     x = randomInt(20, scene.width - 20);
+    //     y = randomInt(20, scene.height - 20);
+    //   }
+    // }
     let entity = {
       id: entityId,
       name: name,
@@ -91,7 +97,7 @@ function addMultipleEntitiesToAnArray(containerArray, amount, name, colour, spee
       damage: damage,
       sight: sight,
       stealth: stealth,
-      fertile: true,
+      ifFertile: true,
       fertilityRate: fertilityRate,
       isDead: false
     }
@@ -105,8 +111,11 @@ function drawObjects(canvasContext, containerArray) {
   //console.log("Drawing", containerArray);
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   for (i = 0; i < containerArray.length; i++) {
-    canvasContext.fillStyle = containerArray[i].colour;
-    canvasContext.fillRect(containerArray[i].x, containerArray[i].y, containerArray[i].width, containerArray[i].height);
+    if (!containerArray[i].isDead) {
+      canvasContext.fillStyle = containerArray[i].colour;
+      canvasContext.fillRect(containerArray[i].x, containerArray[i].y, containerArray[i].width, containerArray[i].height);
+    }
+
   }
 }
 
@@ -117,6 +126,12 @@ function reverseElementIfOnSceneBoundaries(element) {
   if (element.y === 1 || element.y + element.height === scene.height) {
     element.vy *= -1;
   }
+}
+
+function moveElementInRandomDirection(element) {
+  element.xDirection = pickRandomDirection();
+  element.yDirection = pickRandomDirection();
+  element.vx = element.speed * element.xDirection;
 }
 
 function killElementWithNoHealth(element) {
@@ -135,20 +150,18 @@ function validTarget(elementA, elementB) {
 }
 
 function fighting(elementA, elementB) {
-  if (elementA.health > 0 && elementB.health > 0) {
-    elementA.vx = 0;
-    elementA.vy = 0;
-    elementB.vx = 0;
-    elementB.vy = 0;
+  elementA.vx = 0;
+  elementA.vy = 0;
+  elementB.vx = 0;
+  elementB.vy = 0;
+  while (elementA.health > 0 && elementB.health > 0) {
     elementA.health -= elementB.damage;
     elementB.health -= elementA.damage;
   }
   killElementWithNoHealth(elementA);
   killElementWithNoHealth(elementB);
-}
-
-function moveElementsInOppositeDirections(elementA, elementB) {
-  //TODO: calculate direction hit and move each element in opposite directions
+  moveElementInRandomDirection(elementA);
+  moveElementInRandomDirection(elementB);
 }
 
 function moveElementAtCurrentVelocity(element) {
@@ -156,13 +169,23 @@ function moveElementAtCurrentVelocity(element) {
   element.y += element.vy;
 }
 
+function moveElementsInOppositeDirections(elementA, elementB) {
+  //TODO: calculate direction hit and move each element in opposite directions
+  moveElementInRandomDirection(elementA);
+  moveElementInRandomDirection(elementB);
+}
+
 function checkElementIsInContactWithAnother(element) {
   for (let organism of organismsArray) {
-    if (checkElementsAreOverlapping(element, organism)) {
-      if (validTarget(element, organism)) {
-        fighting(element, organism);
-      } else {
-        moveElementsInOppositeDirections(element, organism);
+    if (element !== organism) {
+      if (organism.isDead === false || element.isDead === false) {
+        if (checkElementsAreOverlapping(element, organism)) {
+          if (validTarget(element, organism)) {
+            fighting(element, organism);
+          } else {
+            moveElementsInOppositeDirections(element, organism);
+          }
+        }
       }
     }
   }
@@ -185,9 +208,9 @@ const mouseUpHandler = function (event) {
 function init() {
   canvas = document.getElementById('tutorial');
   ctx = canvas.getContext('2d');
-  addMultipleEntitiesToAnArray(organismsArray, 10, "plant", "green", 0, 100, 0, 0, 0, 1000);
-  addMultipleEntitiesToAnArray(organismsArray, 10, "prey", "blue", 1, 100, 1, 10, 0, 1000);
-  addMultipleEntitiesToAnArray(organismsArray, 10, "predator", "red", 1, 100, 1, 10, 0, 1000);
+  addMultipleEntitiesToAnArray(organismsArray, 5, "plant", "green", 0, 100, 0, 0, 0, 1000);
+  addMultipleEntitiesToAnArray(organismsArray, 5, "prey", "blue", 1, 100, 1, 10, 0, 1000);
+  addMultipleEntitiesToAnArray(organismsArray, 5, "predator", "red", 1, 100, 1, 10, 0, 1000);
   window.requestAnimationFrame(draw);
 }
 
