@@ -4,3 +4,10 @@ body {
 canvas {
   border: 1px solid white;
 }
+.information {
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+.interactive-span:hover {
+  text-decoration: underline;
+}
