@@ -5,11 +5,29 @@
     <title>Evolution Sim</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
-    <canvas id="game" width="800" height="600"></canvas>
-    <div class="information">
-      <p>Sprites: <span id="spriteCount">0</span></p>
-      <p><span class="interactive-span" onclick="pause()">Pause</span></p>
+    <header>Evolution Sim</header>
+    <div class="content">
+      <div class="left">
+        <ul class="menu">
+          <li><span class="interactive-span" onclick="pause()">Pause</span></li>
+          <li>
+            <span class="interactive-span" onclick="restart()">Restart</span>
+          </li>
+        </ul>
+        <canvas id="game" width="800" height="600"></canvas>
+      </div>
+      <div class="right">
+        <ul>
+          <li id="errorText">error</li>
+          <li>Sprites: <span id="spriteCount">0</span></li>
+          <li>
+            Timer:&nbsp;<span id="hours">0</span>:<span id="minutes">0</span
+            >:<span id="seconds">0</span>
+          </li>
+        </ul>
+      </div>
     </div>
     <script src="kontra.js"></script>
     <script src="main.js"></script>

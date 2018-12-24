@@ -1,7 +1,34 @@
 kontra.init();
 
 let sprites = [];
-let spriteCount = document.getElementById("spriteCount");
+const spriteCount = document.getElementById("spriteCount");
+const secondsTimer = document.getElementById("seconds");
+const minutesTimer = document.getElementById("minutes");
+const hourTimer = document.getElementById("hour");
+const errorText = document.getElementById("errorText");
+let isTimerPaused = false;
+
+function restartTimer() {
+  let seconds = 0;
+  let minutes = 0;
+  let hours = 0;
+  setInterval(() => {
+    if (!isTimerPaused) {
+      seconds += 1;
+      if (seconds === 60) {
+        minutes += 1;
+        seconds = 0;
+        minutesTimer.innerHTML = minutes;
+      }
+      if (minutes === 60) {
+        hours += 1;
+        minutes = 0;
+        hourTimer.innerHTML = hours;
+      }
+      secondsTimer.innerHTML = seconds;
+    }
+  }, 1000);
+}
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -24,6 +51,28 @@ function pause() {
   } else {
     loop.stop();
   }
+  isTimerPaused = !isTimerPaused;
+}
+
+function restart() {
+  sprites = [];
+  isTimerPaused = false;
+  const amountToSpawn = 50;
+  const canvasSize = { x: 800, y: 600 };
+  for (let i = 0; i < amountToSpawn; i++) {
+    createSprite(
+      Math.floor(Math.random() * canvasSize.x),
+      Math.floor(Math.random() * canvasSize.y),
+      25,
+      4,
+      1,
+      2000,
+      2000,
+      10,
+      5
+    );
+  }
+  restartTimer();
 }
 
 function createSprite(
@@ -53,6 +102,7 @@ function createSprite(
     hunger: totalHunger, //1000
     totalHunger: totalHunger, //1000
     health: health, //1000
+    totalHealth: health, //1000
     damage: damage, //1
     defence: defence, //0
     sight: 0,
@@ -120,30 +170,30 @@ function breed(spriteA, spriteB) {
       }
     }
   } else if (randomMutation === 5) {
-    health = sprite.health;
+    health = sprite.totalHealth;
     if (getRandomInt(1, 2) === 1) {
-      health += 100;
+      health += 10;
     } else {
-      if (health > 100) {
-        health -= 100;
+      if (health > 10) {
+        health -= 10;
       }
     }
   } else if (randomMutation === 6) {
     damage = sprite.damage;
     if (getRandomInt(1, 2) === 1) {
-      damage += 1;
+      damage += 5;
     } else {
       if (damage > 0) {
-        damage -= 1;
+        damage -= 5;
       }
     }
   } else if (randomMutation === 7) {
     defence = sprite.defence;
     if (getRandomInt(1, 2) === 1) {
-      defence += 1;
+      defence += 5;
     } else {
       if (defence > 0) {
-        defence -= 1;
+        defence -= 5;
       }
     }
   }
@@ -193,22 +243,6 @@ function collisionDetection() {
   }
 }
 
-const amountToSpawn = 50;
-const canvasSize = { x: 800, y: 600 };
-for (let i = 0; i < amountToSpawn; i++) {
-  createSprite(
-    Math.floor(Math.random() * canvasSize.x),
-    Math.floor(Math.random() * canvasSize.y),
-    25,
-    4,
-    1,
-    1000,
-    1000,
-    1,
-    0
-  );
-}
-
 let loop = kontra.gameLoop({
   update() {
     sprites.map(sprite => {
@@ -229,7 +263,7 @@ let loop = kontra.gameLoop({
       else if (sprite.y > kontra.canvas.height) {
         sprite.y = 0;
       }
-      if (sprite.hunger === 0 || sprite.health === 0) {
+      if (sprite.hunger <= 0 || sprite.health <= 0) {
         sprite.ttl = 0;
       }
       if (sprite.hunger > 0) {
@@ -257,6 +291,18 @@ let loop = kontra.gameLoop({
     );
 
     spriteCount.innerHTML = sprites.length;
+
+    if (sprites.length >= 1000) {
+      errorText.innerHTML = "Exponential growth detected... Sim over.";
+      sprites = [];
+      isTimerPaused = true;
+    } else if (sprites.length <= 0) {
+      errorText.innerHTML = "All sprites are dead... Sim over.";
+      sprites = [];
+      isTimerPaused = true;
+    } else {
+      errorText.setAttribute("style", "display:none;");
+    }
   },
   render() {
     sprites.map(sprite => sprite.render());
