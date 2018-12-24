@@ -44,6 +44,7 @@ function createSprite(
     width: size, //25
     height: size, //25
     ttl: Infinity,
+    speed: speed,
     dx: Math.random() * speed - 2,
     dy: Math.random() * speed - 2,
     isFertile: true,
@@ -66,13 +67,15 @@ function createSprite(
 }
 
 function breed(spriteA, spriteB) {
-  let size = 25;
-  let speed = 4;
-  let fertilityRate = 1;
-  let totalHunger = 1000;
-  let health = 1000;
-  let damage = 1;
-  let defence = 0;
+  let size = getRandomInt(1, 2) === 1 ? spriteA.width : spriteB.width;
+  let speed = getRandomInt(1, 2) === 1 ? spriteA.speed : spriteB.speed;
+  let fertilityRate =
+    getRandomInt(1, 2) === 1 ? spriteA.fertilityRate : spriteB.fertilityRate;
+  let totalHunger =
+    getRandomInt(1, 2) === 1 ? spriteA.totalHunger : spriteB.totalHunger;
+  let health = getRandomInt(1, 2) === 1 ? spriteA.health : spriteB.health;
+  let damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
+  let defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
   let sprite = {};
   if (getRandomInt(1, 2) === 1) {
     sprite = spriteA;
@@ -81,80 +84,80 @@ function breed(spriteA, spriteB) {
   }
   const randomMutation = getRandomInt(1, 7);
   if (randomMutation === 1) {
-    size = sprite.size;
-    // if (getRandomInt(1, 2) === 1) {
-    //   size += 1;
-    // } else {
-    //   if (size > 0) {
-    //     size -= 1;
-    //   }
-    // }
+    size = sprite.width;
+    if (getRandomInt(1, 2) === 1) {
+      size += 5;
+    } else {
+      if (size > 5) {
+        size -= 5;
+      }
+    }
   } else if (randomMutation === 2) {
     speed = sprite.speed;
-    // if (getRandomInt(1, 2) === 1) {
-    //   speed += 1;
-    // } else {
-    //   if (speed > 4) {
-    //     speed -= 1;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      speed += 1;
+    } else {
+      if (speed > 4) {
+        speed -= 1;
+      }
+    }
   } else if (randomMutation === 3) {
     fertilityRate = sprite.fertilityRate;
-    // if (getRandomInt(1, 2) === 1) {
-    //   fertilityRate += 1;
-    // } else {
-    //   if (fertilityRate > 0) {
-    //     fertilityRate -= 1;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      fertilityRate += 1;
+    } else {
+      if (fertilityRate > 0) {
+        fertilityRate -= 1;
+      }
+    }
   } else if (randomMutation === 4) {
     totalHunger = sprite.totalHunger;
-    // if (getRandomInt(1, 2) === 1) {
-    //   totalHunger += 100;
-    // } else {
-    //   if (totalHunger > 100) {
-    //     totalHunger -= 100;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      totalHunger += 100;
+    } else {
+      if (totalHunger > 100) {
+        totalHunger -= 100;
+      }
+    }
   } else if (randomMutation === 5) {
     health = sprite.health;
-    // if (getRandomInt(1, 2) === 1) {
-    //   health += 100;
-    // } else {
-    //   if (health > 100) {
-    //     health -= 100;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      health += 100;
+    } else {
+      if (health > 100) {
+        health -= 100;
+      }
+    }
   } else if (randomMutation === 6) {
     damage = sprite.damage;
-    // if (getRandomInt(1, 2) === 1) {
-    //   damage += 1;
-    // } else {
-    //   if (damage > 0) {
-    //     damage -= 1;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      damage += 1;
+    } else {
+      if (damage > 0) {
+        damage -= 1;
+      }
+    }
   } else if (randomMutation === 7) {
     defence = sprite.defence;
-    // if (getRandomInt(1, 2) === 1) {
-    //   defence += 1;
-    // } else {
-    //   if (defence > 0) {
-    //     defence -= 1;
-    //   }
-    // }
+    if (getRandomInt(1, 2) === 1) {
+      defence += 1;
+    } else {
+      if (defence > 0) {
+        defence -= 1;
+      }
+    }
   }
-  // createSprite(
-  //   spriteA.x,
-  //   sprites[i].y,
-  //   size,
-  //   speed,
-  //   fertilityRate,
-  //   totalHunger,
-  //   health,
-  //   damage,
-  //   defence
-  // );
+  createSprite(
+    spriteA.x,
+    spriteA.y,
+    size,
+    speed,
+    fertilityRate,
+    totalHunger,
+    health,
+    damage,
+    defence
+  );
   spriteA.isFertile = false;
   spriteB.isFertile = false;
 }
