@@ -60,14 +60,14 @@ function isCollide(a, b) {
   );
 }
 
-function togglePause() {
+window.togglePause = function() {
   if (loop.isStopped) {
     loop.start();
   } else {
     loop.stop();
   }
   isTimerPaused = !isTimerPaused;
-}
+};
 
 function pause() {
   loop.stop();
@@ -84,7 +84,7 @@ function clearSelectedSpriteAndInterval(sprite) {
   clearInterval(sprite.interval);
 }
 
-function restart() {
+window.restart = function() {
   sprites.forEach(sprite => {
     clearSelectedSpriteAndInterval(sprite);
   });
@@ -111,7 +111,7 @@ function restart() {
   }
   restartTimer();
   loop.start();
-}
+};
 
 function displaySpriteProps(sprite) {
   selectedSpriteInfo.innerHTML = "";
