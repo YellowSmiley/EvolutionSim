@@ -1,18 +1,24 @@
 kontra.init();
 
 let sprites = [];
+let spriteUniqueId = 1;
 const spriteCount = document.getElementById("spriteCount");
 const secondsTimer = document.getElementById("seconds");
 const minutesTimer = document.getElementById("minutes");
-const hourTimer = document.getElementById("hour");
+const hourTimer = document.getElementById("hours");
 const errorText = document.getElementById("errorText");
+const selectedSpriteInfo = document.getElementById("selectedSpriteInfo");
 let isTimerPaused = false;
+let timer = null;
 
-function restartTimer() {
+function startTimer() {
   let seconds = 0;
+  secondsTimer.innerHTML = 0;
   let minutes = 0;
+  minutesTimer.innerHTML = 0;
   let hours = 0;
-  setInterval(() => {
+  hourTimer.innerHTML = 0;
+  timer = setInterval(() => {
     if (!isTimerPaused) {
       seconds += 1;
       if (seconds === 60) {
@@ -30,6 +36,15 @@ function restartTimer() {
   }, 1000);
 }
 
+function restartTimer() {
+  if (timer) {
+    clearInterval(timer);
+    startTimer();
+  } else {
+    startTimer();
+  }
+}
+
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -45,7 +60,7 @@ function isCollide(a, b) {
   );
 }
 
-function pause() {
+function togglePause() {
   if (loop.isStopped) {
     loop.start();
   } else {
@@ -54,8 +69,30 @@ function pause() {
   isTimerPaused = !isTimerPaused;
 }
 
+function pause() {
+  loop.stop();
+  isTimerPaused = true;
+}
+
+function setError(message) {
+  errorText.removeAttribute("style");
+  errorText.innerHTML = message;
+}
+
+function clearSelectedSpriteAndInterval(sprite) {
+  selectedSpriteInfo.innerHTML = "";
+  clearInterval(sprite.interval);
+}
+
 function restart() {
+  sprites.forEach(sprite => {
+    clearSelectedSpriteAndInterval(sprite);
+  });
+  if (!loop.isStopped) {
+    loop.stop();
+  }
   sprites = [];
+  errorText.setAttribute("style", "display:none;");
   isTimerPaused = false;
   const amountToSpawn = 50;
   const canvasSize = { x: 800, y: 600 };
@@ -73,6 +110,58 @@ function restart() {
     );
   }
   restartTimer();
+  loop.start();
+}
+
+function displaySpriteProps(sprite) {
+  selectedSpriteInfo.innerHTML = "";
+  let listOfSprites = document.createElement("ul");
+  const shownProps = [
+    "height",
+    "width",
+    "color",
+    "speed",
+    "isFertile",
+    "fertilityRate",
+    "fertilityProgress",
+    "hunger",
+    "totalHunger",
+    "health",
+    "totalHealth",
+    "damage",
+    "defence",
+    "sight"
+  ];
+  Object.entries(sprite).map(prop => {
+    for (let i = 0; i < shownProps.length - 1; i++) {
+      if (prop[0] === shownProps[i]) {
+        let li = document.createElement("li");
+        let liContent = document.createTextNode(prop[0] + ": " + prop[1]);
+        li.appendChild(liContent);
+        listOfSprites.appendChild(li);
+        break;
+      }
+    }
+  });
+  selectedSpriteInfo.appendChild(listOfSprites);
+}
+
+function handleSpriteOnClick(sprite) {
+  sprites.forEach(otherSprite => {
+    if (sprite !== otherSprite) {
+      otherSprite.selected = "false";
+      clearInterval(otherSprite.interval);
+      otherSprite.color = "red";
+    }
+  });
+  sprite.color = "green";
+  sprite.selected = "true";
+  displaySpriteProps(sprite);
+  sprite.interval = setInterval(() => {
+    if (!isTimerPaused) {
+      displaySpriteProps(sprite);
+    }
+  }, 100);
 }
 
 function createSprite(
@@ -86,7 +175,11 @@ function createSprite(
   damage,
   defence
 ) {
+  spriteUniqueId += 1;
   let sprite = kontra.sprite({
+    id: spriteUniqueId,
+    selected: false,
+    interval: null,
     x: x, //Math.floor(Math.random() * canvasSize.x)
     y: y, //Math.floor(Math.random() * canvasSize.y)
     color: "red",
@@ -96,7 +189,7 @@ function createSprite(
     speed: speed,
     dx: Math.random() * speed - 2,
     dy: Math.random() * speed - 2,
-    isFertile: true,
+    isFertile: false,
     fertilityRate: fertilityRate, //1
     fertilityProgress: 0, //0
     hunger: totalHunger, //1000
@@ -109,7 +202,7 @@ function createSprite(
     diseased: { diseased: false, damage: 0 },
     isColliding: false,
     onUp: function() {
-      console.log(this);
+      handleSpriteOnClick(this);
     }
   });
   sprites.push(sprite);
@@ -117,96 +210,90 @@ function createSprite(
 }
 
 function breed(spriteA, spriteB) {
-  let size = getRandomInt(1, 2) === 1 ? spriteA.width : spriteB.width;
-  let speed = getRandomInt(1, 2) === 1 ? spriteA.speed : spriteB.speed;
-  let fertilityRate =
-    getRandomInt(1, 2) === 1 ? spriteA.fertilityRate : spriteB.fertilityRate;
-  let totalHunger =
-    getRandomInt(1, 2) === 1 ? spriteA.totalHunger : spriteB.totalHunger;
-  let health = getRandomInt(1, 2) === 1 ? spriteA.health : spriteB.health;
-  let damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
-  let defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
   let sprite = {};
   if (getRandomInt(1, 2) === 1) {
-    sprite = spriteA;
+    sprite = Object.assign({}, spriteA);
   } else {
-    sprite = spriteB;
+    sprite = Object.assign({}, spriteB);
   }
+  sprite.size = getRandomInt(1, 2) === 1 ? spriteA.width : spriteB.width;
+  sprite.speed = getRandomInt(1, 2) === 1 ? spriteA.speed : spriteB.speed;
+  sprite.fertilityRate =
+    getRandomInt(1, 2) === 1 ? spriteA.fertilityRate : spriteB.fertilityRate;
+  sprite.totalHunger =
+    getRandomInt(1, 2) === 1 ? spriteA.totalHunger : spriteB.totalHunger;
+  sprite.health = getRandomInt(1, 2) === 1 ? spriteA.health : spriteB.health;
+  sprite.damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
+  sprite.defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
+  //TODO: Fix healing on giving birth...
   const randomMutation = getRandomInt(1, 7);
   if (randomMutation === 1) {
-    size = sprite.width;
     if (getRandomInt(1, 2) === 1) {
-      size += 5;
+      sprite.size += 5;
     } else {
-      if (size > 5) {
-        size -= 5;
+      if (sprite.size > 5) {
+        sprite.size -= 5;
       }
     }
   } else if (randomMutation === 2) {
-    speed = sprite.speed;
     if (getRandomInt(1, 2) === 1) {
-      speed += 1;
+      sprite.speed += 1;
     } else {
-      if (speed > 4) {
-        speed -= 1;
+      if (sprite.speed > 4) {
+        sprite.speed -= 1;
       }
     }
   } else if (randomMutation === 3) {
-    fertilityRate = sprite.fertilityRate;
     if (getRandomInt(1, 2) === 1) {
-      fertilityRate += 1;
+      sprite.fertilityRate += 1;
     } else {
-      if (fertilityRate > 0) {
-        fertilityRate -= 1;
+      if (sprite.fertilityRate > 0) {
+        sprite.fertilityRate -= 1;
       }
     }
   } else if (randomMutation === 4) {
-    totalHunger = sprite.totalHunger;
     if (getRandomInt(1, 2) === 1) {
-      totalHunger += 100;
+      sprite.totalHunger += 100;
     } else {
-      if (totalHunger > 100) {
-        totalHunger -= 100;
+      if (sprite.totalHunger > 100) {
+        sprite.totalHunger -= 100;
       }
     }
   } else if (randomMutation === 5) {
-    health = sprite.totalHealth;
     if (getRandomInt(1, 2) === 1) {
-      health += 10;
+      sprite.health += 10;
     } else {
-      if (health > 10) {
-        health -= 10;
+      if (sprite.health > 10) {
+        sprite.health -= 10;
       }
     }
   } else if (randomMutation === 6) {
-    damage = sprite.damage;
     if (getRandomInt(1, 2) === 1) {
-      damage += 5;
+      sprite.damage += 5;
     } else {
-      if (damage > 0) {
-        damage -= 5;
+      if (sprite.damage > 0) {
+        sprite.damage -= 5;
       }
     }
   } else if (randomMutation === 7) {
-    defence = sprite.defence;
     if (getRandomInt(1, 2) === 1) {
-      defence += 5;
+      sprite.defence += 5;
     } else {
-      if (defence > 0) {
-        defence -= 5;
+      if (sprite.defence > 0) {
+        sprite.defence -= 5;
       }
     }
   }
   createSprite(
-    spriteA.x,
-    spriteA.y,
-    size,
-    speed,
-    fertilityRate,
-    totalHunger,
-    health,
-    damage,
-    defence
+    sprite.position._x,
+    sprite.position._y,
+    sprite.size,
+    sprite.speed,
+    sprite.fertilityRate,
+    sprite.totalHunger,
+    sprite.health,
+    sprite.damage,
+    sprite.defence
   );
   spriteA.isFertile = false;
   spriteB.isFertile = false;
@@ -263,8 +350,16 @@ let loop = kontra.gameLoop({
       else if (sprite.y > kontra.canvas.height) {
         sprite.y = 0;
       }
-      if (sprite.hunger <= 0 || sprite.health <= 0) {
+      if (sprite.health <= 0) {
+        if (sprite.interval) {
+          clearSelectedSpriteAndInterval(sprite);
+        }
         sprite.ttl = 0;
+      }
+      if (sprite.hunger <= 0) {
+        if (sprite.health > 0) {
+          sprite.health -= 1;
+        }
       }
       if (sprite.hunger > 0) {
         sprite.hunger -= 1;
@@ -280,33 +375,30 @@ let loop = kontra.gameLoop({
       }
     });
 
-    sprites.forEach((sprite, i) => (sprite.isColliding = false));
+    sprites.forEach((sprite, i) => {
+      sprite.isColliding = false;
+    });
 
     collisionDetection();
 
     sprites = sprites.filter(sprite => sprite.isAlive());
 
-    sprites.forEach((sprite, i) =>
-      sprite.isColliding ? (sprite.color = "green") : (sprite.color = "red")
-    );
+    // Colour isColliding checker
+    // sprites.forEach((sprite, i) =>
+    //   sprite.isColliding ? (sprite.color = "green") : (sprite.color = "red")
+    // );
 
     spriteCount.innerHTML = sprites.length;
 
-    if (sprites.length >= 1000) {
-      errorText.innerHTML = "Exponential growth detected... Sim over.";
-      sprites = [];
-      isTimerPaused = true;
+    if (sprites.length >= 400) {
+      pause();
+      setError("Exponential growth detected... Sim over; please restart.");
     } else if (sprites.length <= 0) {
-      errorText.innerHTML = "All sprites are dead... Sim over.";
-      sprites = [];
-      isTimerPaused = true;
-    } else {
-      errorText.setAttribute("style", "display:none;");
+      pause();
+      setError("All sprites are dead... Sim over; please restart.");
     }
   },
   render() {
     sprites.map(sprite => sprite.render());
   }
 });
-
-loop.start();

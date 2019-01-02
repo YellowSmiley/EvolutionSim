@@ -49,6 +49,8 @@ p {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+.padded-content {
   padding: 10px;
 }
 .left {
