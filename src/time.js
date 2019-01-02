@@ -2,7 +2,7 @@ const secondsTimer = document.getElementById("seconds");
 const minutesTimer = document.getElementById("minutes");
 const hourTimer = document.getElementById("hours");
 let timer = null;
-export let isTimerPaused = false;
+window.isTimerPaused = false;
 
 function startTimer() {
   let seconds = 0;
@@ -38,14 +38,14 @@ export function restartTimer() {
   }
 }
 
-function togglePause() {
+window.togglePause = function() {
   if (loop.isStopped) {
     loop.start();
   } else {
     loop.stop();
   }
   isTimerPaused = !isTimerPaused;
-}
+};
 
 export function pause() {
   loop.stop();

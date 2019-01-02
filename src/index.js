@@ -1,49 +1,12 @@
+import { restartTimer, pause } from "./time";
+
 kontra.init();
 
 let sprites = [];
 let spriteUniqueId = 1;
 const spriteCount = document.getElementById("spriteCount");
-const secondsTimer = document.getElementById("seconds");
-const minutesTimer = document.getElementById("minutes");
-const hourTimer = document.getElementById("hours");
 const errorText = document.getElementById("errorText");
 const selectedSpriteInfo = document.getElementById("selectedSpriteInfo");
-let isTimerPaused = false;
-let timer = null;
-
-function startTimer() {
-  let seconds = 0;
-  secondsTimer.innerHTML = 0;
-  let minutes = 0;
-  minutesTimer.innerHTML = 0;
-  let hours = 0;
-  hourTimer.innerHTML = 0;
-  timer = setInterval(() => {
-    if (!isTimerPaused) {
-      seconds += 1;
-      if (seconds === 60) {
-        minutes += 1;
-        seconds = 0;
-        minutesTimer.innerHTML = minutes;
-      }
-      if (minutes === 60) {
-        hours += 1;
-        minutes = 0;
-        hourTimer.innerHTML = hours;
-      }
-      secondsTimer.innerHTML = seconds;
-    }
-  }, 1000);
-}
-
-function restartTimer() {
-  if (timer) {
-    clearInterval(timer);
-    startTimer();
-  } else {
-    startTimer();
-  }
-}
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -58,20 +21,6 @@ function isCollide(a, b) {
     a.x + a.width < b.x ||
     a.x > b.x + b.width
   );
-}
-
-window.togglePause = function() {
-  if (loop.isStopped) {
-    loop.start();
-  } else {
-    loop.stop();
-  }
-  isTimerPaused = !isTimerPaused;
-};
-
-function pause() {
-  loop.stop();
-  isTimerPaused = true;
 }
 
 function setError(message) {
@@ -330,7 +279,7 @@ function collisionDetection() {
   }
 }
 
-let loop = kontra.gameLoop({
+window.loop = kontra.gameLoop({
   update() {
     sprites.map(sprite => {
       sprite.update();
