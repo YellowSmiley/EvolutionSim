@@ -9,29 +9,8 @@
   <body>
     <script src="../node_modules/kontra/kontra.js"></script>
     <header>Evolution Sim</header>
-    <div class="content">
-      <div class="left padded-content">
-        <ul class="menu">
-          <li>
-            <span class="interactive-span" onclick="togglePause()">Pause</span>
-          </li>
-          <li>
-            <span class="interactive-span" onclick="restart()">Restart</span>
-          </li>
-        </ul>
-        <canvas id="game" width="800" height="600"></canvas>
-      </div>
-      <div class="right">
-        <ul class="padded-content">
-          <li id="errorText" style="display:none;">error</li>
-          <li>Sprites: <span id="spriteCount">0</span></li>
-          <li>
-            Timer:&nbsp;<span id="hours">0</span>:<span id="minutes">0</span
-            >:<span id="seconds">0</span>
-          </li>
-        </ul>
-        <div class="padded-content" id="selectedSpriteInfo"></div>
-      </div>
+    <div id="sim" class="content">
+      <form><label for=""></label> <input id="" /></form>
     </div>
     <script src="main.js"></script>
   </body>
