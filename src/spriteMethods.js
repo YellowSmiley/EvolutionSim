@@ -111,6 +111,24 @@ export function createSprite(
   kontra.pointer.track(sprite);
 }
 
+export function createSprites() {
+  const canvasSize = { x: 800, y: 600 };
+  for (let i = 0; i < amountToSpawn; i++) {
+    createSprite(
+      Math.floor(Math.random() * canvasSize.x),
+      Math.floor(Math.random() * canvasSize.y),
+      size,
+      speed,
+      fertilityRate,
+      getRandomInt(1, fertilityProgress),
+      totalHunger,
+      health,
+      damage,
+      defence
+    );
+  }
+}
+
 export function breed(spriteA, spriteB) {
   let sprite = {};
   if (getRandomInt(1, 2) === 1) {
@@ -216,3 +234,17 @@ export function feed(spriteA, spriteB) {
     spriteB.hunger += 1;
   }
 }
+
+window.infinityGauntlet = function() {
+  let numberOfSpitesToCull = sprites.length - 1;
+  numberOfSpitesToCull = Math.round(numberOfSpitesToCull / 2);
+  for (let i = 0; i < numberOfSpitesToCull; i++) {
+    sprites[i].ttl = 0;
+  }
+};
+
+window.starve = function() {
+  for (let i = 0; i < sprites.length - 1; i++) {
+    sprites[i].hunger = 0;
+  }
+};

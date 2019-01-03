@@ -9,8 +9,89 @@
   <body>
     <script src="../node_modules/kontra/kontra.js"></script>
     <header>Evolution Sim</header>
-    <div id="sim" class="content">
-      <form><label for=""></label> <input id="" /></form>
+    <div id="form" class="content">
+      <form class="centred-form">
+        <p>Enter your Sim's starting parameters. Defaults next to names:</p>
+        <ul class="wrapper">
+          <li class="form-row" title="How many sprites to start with">
+            <label for="amount">Amount of Sprites (50)</label>
+            <input id="amount" />
+          </li>
+          <li class="form-row" title="How big the sprites are">
+            <label for="size">Size (25)</label> <input id="size" />
+          </li>
+          <li class="form-row" title="How fast the sprites are">
+            <label for="speed">Speed (4)</label> <input id="speed" />
+          </li>
+          <li class="form-row" title="How fast the sprites breed">
+            <label for="fertilityRate">Fertility Rate (1)</label>
+            <input id="fertilityRate" />
+          </li>
+          <li
+            class="form-row"
+            title="The max is 1000, when at 1000 they can breed"
+          >
+            <label for="fertilityProgress">Fertility Progress (1000)</label>
+            <input id="fertilityProgress" />
+          </li>
+          <li class="form-row" title="How long they can go without eating">
+            <label for="totalHunger">Total Hunger (2000)</label>
+            <input id="totalHunger" />
+          </li>
+          <li class="form-row" title="How much damage the sprites can take">
+            <label for="health">Health (2000)</label> <input id="health" />
+          </li>
+          <li
+            class="form-row"
+            title="How much health the sprites take from the others"
+          >
+            <label for="damage">Damage (10)</label> <input id="damage" />
+          </li>
+          <li class="form-row" title="How much damage the sprites can mitigate">
+            <label for="defence">Defence (5)</label> <input id="defence" />
+          </li>
+          <li class="form-row">
+            <button onclick="startGame()" type="button">Start</button>
+          </li>
+        </ul>
+      </form>
+    </div>
+    <div id="sim" class="content" style="display:none;">
+      <div class="left padded-content">
+        <ul class="menu">
+          <li>
+            <span class="interactive-span" onclick="togglePause()">Pause</span>
+          </li>
+          <li>
+            <span class="interactive-span" onclick="restart()">Restart</span>
+          </li>
+          <li>
+            <span class="interactive-span" onclick="stopGame()"
+              >Change Starting Parameters</span
+            >
+          </li>
+          <li>
+            <span class="interactive-span" onclick="infinityGauntlet()"
+              >Infinity Gauntlet</span
+            >
+          </li>
+          <li>
+            <span class="interactive-span" onclick="starve()">Starve</span>
+          </li>
+        </ul>
+        <canvas id="game" width="800" height="600"></canvas>
+      </div>
+      <div class="right">
+        <ul class="padded-content">
+          <li id="errorText" style="display:none;">error</li>
+          <li>Sprites: <span id="spriteCount">0</span></li>
+          <li>
+            Timer:&nbsp;<span id="hours">0</span>:<span id="minutes">0</span
+            >:<span id="seconds">0</span>
+          </li>
+        </ul>
+        <div class="padded-content" id="selectedSpriteInfo"></div>
+      </div>
     </div>
     <script src="main.js"></script>
   </body>

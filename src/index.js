@@ -1,80 +1,126 @@
 import { restartTimer, pause } from "./time";
-import { getRandomInt, setError } from "./utils";
+import { setError, changeEventHandler } from "./utils";
 import {
-  createSprite,
   collisionDetection,
   spriteCanvasBoundaryChecker,
-  spritePropsChecker
+  spritePropsChecker,
+  createSprites
 } from "./spriteMethods";
 import { clearSelectedSpriteAndInterval } from "./spriteSelector";
 
-kontra.init();
+window.errorText = document.getElementById("errorText");
+window.sim = document.getElementById("sim");
+window.form = document.getElementById("form");
 
-window.sprites = [];
-const spriteCount = document.getElementById("spriteCount");
+window.amountToSpawn = 50;
+window.size = 25;
+window.speed = 4;
+window.fertilityRate = 1;
+window.fertilityProgress = 1000;
+window.totalHunger = 2000;
+window.health = 2000;
+window.damage = 10;
+window.defence = 5;
 
-window.restart = function() {
+document.getElementById("amount").value = amountToSpawn;
+document.getElementById("size").value = size;
+document.getElementById("speed").value = speed;
+document.getElementById("fertilityRate").value = fertilityRate;
+document.getElementById("fertilityProgress").value = fertilityProgress;
+document.getElementById("totalHunger").value = totalHunger;
+document.getElementById("health").value = health;
+document.getElementById("damage").value = damage;
+document.getElementById("defence").value = defence;
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+    document.querySelector('input[id="amount"]').onchange = changeEventHandler;
+    document.querySelector('input[id="size"]').onchange = changeEventHandler;
+    document.querySelector('input[id="speed"]').onchange = changeEventHandler;
+    document.querySelector(
+      'input[id="fertilityRate"]'
+    ).onchange = changeEventHandler;
+    document.querySelector(
+      'input[id="fertilityProgress"]'
+    ).onchange = changeEventHandler;
+    document.querySelector(
+      'input[id="totalHunger"]'
+    ).onchange = changeEventHandler;
+    document.querySelector('input[id="health"]').onchange = changeEventHandler;
+    document.querySelector('input[id="damage"]').onchange = changeEventHandler;
+    document.querySelector('input[id="defence"]').onchange = changeEventHandler;
+  },
+  false
+);
+
+window.startGame = function() {
+  form.setAttribute("style", "display:none;");
+  sim.removeAttribute("style");
+  kontra.init();
+
+  window.sprites = [];
+  const spriteCount = document.getElementById("spriteCount");
+  window.restart = function() {
+    sprites.forEach(sprite => {
+      clearSelectedSpriteAndInterval(sprite);
+    });
+    if (!loop.isStopped) {
+      loop.stop();
+    }
+    sprites = [];
+    errorText.setAttribute("style", "display:none;");
+    isTimerPaused = false;
+    createSprites(amountToSpawn, 25, 4, 1, 1000, 2000, 2000, 10, 5);
+    restartTimer();
+    loop.start();
+  };
+
+  window.loop = kontra.gameLoop({
+    update() {
+      sprites.map(sprite => {
+        sprite.update();
+        spriteCanvasBoundaryChecker(sprite);
+        spritePropsChecker(sprite);
+      });
+
+      sprites.forEach((sprite, i) => {
+        sprite.isColliding = false;
+      });
+
+      collisionDetection();
+
+      sprites = sprites.filter(sprite => sprite.isAlive());
+
+      // Colour isColliding checker
+      // sprites.forEach((sprite, i) =>
+      //   sprite.isColliding ? (sprite.color = "green") : (sprite.color = "red")
+      // );
+
+      spriteCount.innerHTML = sprites.length;
+
+      if (sprites.length >= 400) {
+        pause();
+        setError("Exponential growth detected... Sim over; please restart.");
+      } else if (sprites.length <= 0) {
+        pause();
+        setError("All sprites are dead... Sim over; please restart.");
+      }
+    },
+    render() {
+      sprites.map(sprite => sprite.render());
+    }
+  });
+};
+
+window.stopGame = function() {
   sprites.forEach(sprite => {
     clearSelectedSpriteAndInterval(sprite);
   });
-  if (!loop.isStopped) {
-    loop.stop();
-  }
+  isTimerPaused = false;
+  restartTimer();
   sprites = [];
   errorText.setAttribute("style", "display:none;");
-  isTimerPaused = false;
-  const amountToSpawn = 50;
-  const canvasSize = { x: 800, y: 600 };
-  for (let i = 0; i < amountToSpawn; i++) {
-    createSprite(
-      Math.floor(Math.random() * canvasSize.x),
-      Math.floor(Math.random() * canvasSize.y),
-      25,
-      4,
-      1,
-      getRandomInt(1, 1000),
-      2000,
-      2000,
-      10,
-      5
-    );
-  }
-  restartTimer();
-  loop.start();
+  sim.setAttribute("style", "display:none;");
+  form.removeAttribute("style");
 };
-
-window.loop = kontra.gameLoop({
-  update() {
-    sprites.map(sprite => {
-      sprite.update();
-      spriteCanvasBoundaryChecker(sprite);
-      spritePropsChecker(sprite);
-    });
-
-    sprites.forEach((sprite, i) => {
-      sprite.isColliding = false;
-    });
-
-    collisionDetection();
-
-    sprites = sprites.filter(sprite => sprite.isAlive());
-
-    // Colour isColliding checker
-    // sprites.forEach((sprite, i) =>
-    //   sprite.isColliding ? (sprite.color = "green") : (sprite.color = "red")
-    // );
-
-    spriteCount.innerHTML = sprites.length;
-
-    if (sprites.length >= 400) {
-      pause();
-      setError("Exponential growth detected... Sim over; please restart.");
-    } else if (sprites.length <= 0) {
-      pause();
-      setError("All sprites are dead... Sim over; please restart.");
-    }
-  },
-  render() {
-    sprites.map(sprite => sprite.render());
-  }
-});
