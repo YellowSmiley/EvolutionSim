@@ -39,6 +39,7 @@ export function restartTimer() {
 }
 
 window.togglePause = function() {
+  //TODO: Fix pause breaking which sprite is selected.
   if (loop.isStopped) {
     loop.start();
   } else {

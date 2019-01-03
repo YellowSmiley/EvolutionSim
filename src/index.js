@@ -71,7 +71,17 @@ window.startGame = function() {
     sprites = [];
     errorText.setAttribute("style", "display:none;");
     isTimerPaused = false;
-    createSprites(amountToSpawn, 25, 4, 1, 1000, 2000, 2000, 10, 5);
+    createSprites(
+      amountToSpawn,
+      size,
+      speed,
+      fertilityRate,
+      fertilityProgress,
+      totalHunger,
+      health,
+      damage,
+      defence
+    );
     restartTimer();
     loop.start();
   };

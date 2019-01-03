@@ -40,6 +40,9 @@ export function spriteCanvasBoundaryChecker(sprite) {
 }
 
 export function spritePropsChecker(sprite) {
+  //TODO: Fix fertilityRate > default
+  //TODO: Fix fertilityProgress > default
+  //TODO: Fix healing when defence higher than damage
   if (sprite.health <= 0) {
     if (sprite.interval) {
       clearSelectedSpriteAndInterval(sprite);
@@ -55,10 +58,10 @@ export function spritePropsChecker(sprite) {
     sprite.hunger -= 1;
   }
   if (!sprite.isFertile) {
-    if (sprite.fertilityProgress < 1000) {
+    if (sprite.fertilityProgress < fertilityProgress) {
       sprite.fertilityProgress += sprite.fertilityRate;
     }
-    if (sprite.fertilityProgress === 1000) {
+    if (sprite.fertilityProgress === fertilityProgress) {
       sprite.isFertile = true;
       sprite.fertilityProgress = 0;
     }
@@ -77,6 +80,7 @@ export function createSprite(
   damage,
   defence
 ) {
+  //TODO: Fix size being anything other than 25 being selectable
   spriteUniqueId += 1;
   let sprite = kontra.sprite({
     id: spriteUniqueId,
