@@ -8,29 +8,29 @@ import {
 } from "./spriteMethods";
 import { clearSelectedSpriteAndInterval } from "./spriteSelector";
 
-window.errorText = document.getElementById("errorText");
-window.sim = document.getElementById("sim");
-window.form = document.getElementById("form");
-
+// Globals
+const errorText = document.getElementById("errorText");
+const sim = document.getElementById("sim");
+const form = document.getElementById("form");
 window.amountToSpawn = 50;
-window.size = 25;
-window.speed = 4;
-window.fertilityRate = 1;
-window.fertilityProgress = 1000;
-window.totalHunger = 2000;
-window.health = 2000;
-window.damage = 10;
-window.defence = 5;
+window.gSize = 25;
+window.gSpeed = 4;
+window.gFertilityRate = 1;
+window.gFertilityProgress = 1000;
+window.gTotalHunger = 2000;
+window.gHealth = 2000;
+window.gDamage = 10;
+window.gDefence = 5;
 
 document.getElementById("amount").value = amountToSpawn;
-document.getElementById("size").value = size;
-document.getElementById("speed").value = speed;
-document.getElementById("fertilityRate").value = fertilityRate;
-document.getElementById("fertilityProgress").value = fertilityProgress;
-document.getElementById("totalHunger").value = totalHunger;
-document.getElementById("health").value = health;
-document.getElementById("damage").value = damage;
-document.getElementById("defence").value = defence;
+document.getElementById("size").value = gSize;
+document.getElementById("speed").value = gSpeed;
+document.getElementById("fertilityRate").value = gFertilityRate;
+document.getElementById("fertilityProgress").value = gFertilityProgress;
+document.getElementById("totalHunger").value = gTotalHunger;
+document.getElementById("health").value = gHealth;
+document.getElementById("damage").value = gDamage;
+document.getElementById("defence").value = gDefence;
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -71,17 +71,7 @@ window.startGame = function() {
     sprites = [];
     errorText.setAttribute("style", "display:none;");
     isTimerPaused = false;
-    createSprites(
-      amountToSpawn,
-      size,
-      speed,
-      fertilityRate,
-      fertilityProgress,
-      totalHunger,
-      health,
-      damage,
-      defence
-    );
+    createSprites();
     restartTimer();
     loop.start();
   };

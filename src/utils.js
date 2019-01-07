@@ -5,41 +5,41 @@ export function changeEventHandler(event) {
     if (this.id === "amount") {
       event.target.value = amountToSpawn;
     } else if (this.id === "size") {
-      event.target.value = size;
+      event.target.value = gSize;
     } else if (this.id === "speed") {
-      event.target.value = speed;
+      event.target.value = gSpeed;
     } else if (this.id === "fertilityRate") {
-      event.target.value = fertilityRate;
+      event.target.value = gFertilityRate;
     } else if (this.id === "fertilityProgress") {
-      event.target.value = fertilityProgress;
+      event.target.value = gFertilityProgress;
     } else if (this.id === "totalHunger") {
-      event.target.value = totalHunger;
+      event.target.value = gTotalHunger;
     } else if (this.id === "health") {
-      event.target.value = health;
+      event.target.value = gHealth;
     } else if (this.id === "damage") {
-      event.target.value = damage;
+      event.target.value = gDamage;
     } else if (this.id === "defence") {
-      event.target.value = defence;
+      event.target.value = gDefence;
     }
   } else {
     if (this.id === "amount") {
       amountToSpawn = event.target.value;
     } else if (this.id === "size") {
-      size = event.target.value;
+      gSize = event.target.value;
     } else if (this.id === "speed") {
-      speed = event.target.value;
+      gSpeed = event.target.value;
     } else if (this.id === "fertilityRate") {
-      fertilityRate = event.target.value;
+      gFertilityRate = event.target.value;
     } else if (this.id === "fertilityProgress") {
-      fertilityProgress = event.target.value;
+      gFertilityProgress = event.target.value;
     } else if (this.id === "totalHunger") {
-      totalHunger = event.target.value;
+      gTotalHunger = event.target.value;
     } else if (this.id === "health") {
-      health = event.target.value;
+      gHealth = event.target.value;
     } else if (this.id === "damage") {
-      damage = event.target.value;
+      gDamage = event.target.value;
     } else if (this.id === "defence") {
-      defence = event.target.value;
+      gDefence = event.target.value;
     }
   }
 }

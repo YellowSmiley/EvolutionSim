@@ -40,9 +40,9 @@ export function spriteCanvasBoundaryChecker(sprite) {
 }
 
 export function spritePropsChecker(sprite) {
-  //TODO: Fix fertilityRate > default
-  //TODO: Fix fertilityProgress > default
-  //TODO: Fix healing when defence higher than damage
+  //TODO: Fix fertilityRate > default - Should be fixed (check)
+  //TODO: Fix fertilityProgress > default - Should be fixed (check)
+  //TODO: Fix healing when defence higher than damage - Should be fixed (check)
   if (sprite.health <= 0) {
     if (sprite.interval) {
       clearSelectedSpriteAndInterval(sprite);
@@ -58,10 +58,10 @@ export function spritePropsChecker(sprite) {
     sprite.hunger -= 1;
   }
   if (!sprite.isFertile) {
-    if (sprite.fertilityProgress < fertilityProgress) {
+    if (sprite.fertilityProgress < sprite.totalFertilityProgress) {
       sprite.fertilityProgress += sprite.fertilityRate;
     }
-    if (sprite.fertilityProgress === fertilityProgress) {
+    if (sprite.fertilityProgress >= sprite.totalFertilityProgress) {
       sprite.isFertile = true;
       sprite.fertilityProgress = 0;
     }
@@ -74,13 +74,13 @@ export function createSprite(
   size,
   speed,
   fertilityRate,
-  fertilityProgress,
+  totalFertilityProgress,
   totalHunger,
   health,
   damage,
   defence
 ) {
-  //TODO: Fix size being anything other than 25 being selectable
+  //TODO: Fix size being anything other than 25 being selectable and collide-able
   spriteUniqueId += 1;
   let sprite = kontra.sprite({
     id: spriteUniqueId,
@@ -97,7 +97,8 @@ export function createSprite(
     dy: Math.random() * speed - 2,
     isFertile: false,
     fertilityRate: fertilityRate, //1
-    fertilityProgress: fertilityProgress, // 1000
+    fertilityProgress: 0, // 1000
+    totalFertilityProgress: totalFertilityProgress, // 1000
     hunger: totalHunger, //1000
     totalHunger: totalHunger, //1000
     health: health, //1000
@@ -121,14 +122,14 @@ export function createSprites() {
     createSprite(
       Math.floor(Math.random() * canvasSize.x),
       Math.floor(Math.random() * canvasSize.y),
-      size,
-      speed,
-      fertilityRate,
-      getRandomInt(1, fertilityProgress),
-      totalHunger,
-      health,
-      damage,
-      defence
+      gSize,
+      gSpeed,
+      gFertilityRate,
+      gFertilityProgress,
+      gTotalHunger,
+      gHealth,
+      gDamage,
+      gDefence
     );
   }
 }
@@ -144,13 +145,17 @@ export function breed(spriteA, spriteB) {
   sprite.speed = getRandomInt(1, 2) === 1 ? spriteA.speed : spriteB.speed;
   sprite.fertilityRate =
     getRandomInt(1, 2) === 1 ? spriteA.fertilityRate : spriteB.fertilityRate;
+  sprite.totalFertilityProgress =
+    getRandomInt(1, 2) === 1
+      ? spriteA.totalFertilityProgress
+      : spriteB.totalFertilityProgress;
   sprite.totalHunger =
     getRandomInt(1, 2) === 1 ? spriteA.totalHunger : spriteB.totalHunger;
   sprite.health = getRandomInt(1, 2) === 1 ? spriteA.health : spriteB.health;
   sprite.damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
   sprite.defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
   //TODO: Add colour that changes slightly from the parents
-  const randomMutation = getRandomInt(1, 7);
+  const randomMutation = getRandomInt(1, 8);
   if (randomMutation === 1) {
     if (getRandomInt(1, 2) === 1) {
       sprite.size += 5;
@@ -207,14 +212,23 @@ export function breed(spriteA, spriteB) {
         sprite.defence -= 5;
       }
     }
+  } else if (randomMutation === 8) {
+    if (getRandomInt(1, 2) === 1) {
+      sprite.totalFertilityProgress += 10;
+    } else {
+      if (sprite.totalFertilityProgress > 0) {
+        sprite.totalFertilityProgress -= 10;
+      }
+    }
   }
+
   createSprite(
     sprite.position._x,
     sprite.position._y,
     sprite.size,
     sprite.speed,
     sprite.fertilityRate,
-    0,
+    sprite.totalFertilityProgress,
     sprite.totalHunger,
     sprite.health,
     sprite.damage,
@@ -226,13 +240,17 @@ export function breed(spriteA, spriteB) {
 
 export function feed(spriteA, spriteB) {
   if (spriteA.health > 0) {
-    spriteA.health -= spriteB.damage - spriteA.defence;
+    if (spriteA.defence < spriteB.damage) {
+      spriteA.health -= spriteB.damage - spriteA.defence;
+    }
   }
   if (spriteA.hunger < spriteA.totalHunger - 10) {
     spriteA.hunger += 10;
   }
   if (spriteB.health > 0) {
-    spriteB.health -= spriteA.damage - spriteB.defence;
+    if (spriteB.defence < spriteA.damage) {
+      spriteB.health -= spriteA.damage - spriteB.defence;
+    }
   }
   if (spriteB.hunger < spriteB.totalHunger) {
     spriteB.hunger += 1;

@@ -46,12 +46,15 @@ export function handleSpriteOnClick(sprite) {
       otherSprite.color = "red";
     }
   });
-  sprite.color = "green";
-  sprite.selected = "true";
-  displaySpriteProps(sprite);
-  sprite.interval = setInterval(() => {
-    if (!isTimerPaused) {
-      displaySpriteProps(sprite);
-    }
-  }, 100);
+  if (sprite.selected !== "true") {
+    clearInterval(sprite);
+    sprite.color = "green";
+    sprite.selected = "true";
+    displaySpriteProps(sprite);
+    sprite.interval = setInterval(() => {
+      if (!isTimerPaused) {
+        displaySpriteProps(sprite);
+      }
+    }, 100);
+  }
 }
