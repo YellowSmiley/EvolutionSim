@@ -151,7 +151,8 @@ export function breed(spriteA, spriteB) {
       : spriteB.totalFertilityProgress;
   sprite.totalHunger =
     getRandomInt(1, 2) === 1 ? spriteA.totalHunger : spriteB.totalHunger;
-  sprite.health = getRandomInt(1, 2) === 1 ? spriteA.health : spriteB.health;
+  sprite.totalHealth =
+    getRandomInt(1, 2) === 1 ? spriteA.totalHealth : spriteB.totalHealth;
   sprite.damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
   sprite.defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
   //TODO: Add colour that changes slightly from the parents
@@ -168,7 +169,7 @@ export function breed(spriteA, spriteB) {
     if (getRandomInt(1, 2) === 1) {
       sprite.speed += 1;
     } else {
-      if (sprite.speed > 4) {
+      if (sprite.speed >= 1) {
         sprite.speed -= 1;
       }
     }
@@ -176,7 +177,7 @@ export function breed(spriteA, spriteB) {
     if (getRandomInt(1, 2) === 1) {
       sprite.fertilityRate += 1;
     } else {
-      if (sprite.fertilityRate > 0) {
+      if (sprite.fertilityRate >= 1) {
         sprite.fertilityRate -= 1;
       }
     }
@@ -190,33 +191,33 @@ export function breed(spriteA, spriteB) {
     }
   } else if (randomMutation === 5) {
     if (getRandomInt(1, 2) === 1) {
-      sprite.health += 10;
+      sprite.totalHealth += 10;
     } else {
-      if (sprite.health > 10) {
-        sprite.health -= 10;
+      if (sprite.totalHealth >= 10) {
+        sprite.totalHealth -= 10;
       }
     }
   } else if (randomMutation === 6) {
     if (getRandomInt(1, 2) === 1) {
-      sprite.damage += 5;
+      sprite.damage += 1;
     } else {
-      if (sprite.damage > 0) {
-        sprite.damage -= 5;
+      if (sprite.damage >= 1) {
+        sprite.damage -= 1;
       }
     }
   } else if (randomMutation === 7) {
     if (getRandomInt(1, 2) === 1) {
-      sprite.defence += 5;
+      sprite.defence += 1;
     } else {
-      if (sprite.defence > 0) {
-        sprite.defence -= 5;
+      if (sprite.defence >= 1) {
+        sprite.defence -= 1;
       }
     }
   } else if (randomMutation === 8) {
     if (getRandomInt(1, 2) === 1) {
       sprite.totalFertilityProgress += 10;
     } else {
-      if (sprite.totalFertilityProgress > 0) {
+      if (sprite.totalFertilityProgress >= 10) {
         sprite.totalFertilityProgress -= 10;
       }
     }
@@ -230,7 +231,7 @@ export function breed(spriteA, spriteB) {
     sprite.fertilityRate,
     sprite.totalFertilityProgress,
     sprite.totalHunger,
-    sprite.health,
+    sprite.totalHealth,
     sprite.damage,
     sprite.defence
   );
@@ -261,6 +262,9 @@ window.infinityGauntlet = function() {
   let numberOfSpitesToCull = sprites.length - 1;
   numberOfSpitesToCull = Math.round(numberOfSpitesToCull / 2);
   for (let i = 0; i < numberOfSpitesToCull; i++) {
+    if (sprites[i].interval) {
+      clearSelectedSpriteAndInterval(sprite);
+    }
     sprites[i].ttl = 0;
   }
 };
