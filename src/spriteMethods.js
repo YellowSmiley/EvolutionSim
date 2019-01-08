@@ -259,11 +259,10 @@ export function feed(spriteA, spriteB) {
 }
 
 window.infinityGauntlet = function() {
-  let numberOfSpitesToCull = sprites.length - 1;
-  numberOfSpitesToCull = Math.round(numberOfSpitesToCull / 2);
+  let numberOfSpitesToCull = Math.round(sprites.length / 2);
   for (let i = 0; i < numberOfSpitesToCull; i++) {
     if (sprites[i].interval) {
-      clearSelectedSpriteAndInterval(sprite);
+      clearSelectedSpriteAndInterval(sprites[i]);
     }
     sprites[i].ttl = 0;
   }
