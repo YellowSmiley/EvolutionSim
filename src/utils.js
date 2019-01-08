@@ -20,6 +20,10 @@ export function changeEventHandler(event) {
       event.target.value = gDamage;
     } else if (this.id === "defence") {
       event.target.value = gDefence;
+    } else if (this.id === "sight") {
+      event.target.value = gSight;
+    } else if (this.id === "stealth") {
+      event.target.value = gStealth;
     }
   } else {
     if (this.id === "amount") {
@@ -40,6 +44,10 @@ export function changeEventHandler(event) {
       gDamage = event.target.value;
     } else if (this.id === "defence") {
       gDefence = event.target.value;
+    } else if (this.id === "sight") {
+      gSight = event.target.value;
+    } else if (this.id === "stealth") {
+      gStealth = event.target.value;
     }
   }
 }

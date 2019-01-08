@@ -14,7 +14,7 @@
         <p>Enter your Sim's starting parameters. Defaults in brackets:</p>
         <ul class="wrapper">
           <li class="form-row" title="How many sprites to start with">
-            <label for="amount">Amount of Sprites (50)</label>
+            <label for="amount">Amount of Sprites (10)</label>
             <input id="amount" />
           </li>
           <li class="form-row" title="How big the sprites are">
@@ -49,6 +49,12 @@
           </li>
           <li class="form-row" title="How much damage the sprites can mitigate">
             <label for="defence">Defence (5)</label> <input id="defence" />
+          </li>
+          <li class="form-row" title="How far the sprites can see">
+            <label for="sight">Sight (25)</label> <input id="sight" />
+          </li>
+          <li class="form-row" title="How much sight the sprites can mitigate">
+            <label for="stealth">Stealth (0)</label> <input id="stealth" />
           </li>
           <li class="form-row">
             <button onclick="startGame()" type="button">Start</button>

@@ -73,30 +73,25 @@ export function spritePropsChecker(sprite) {
   }
 }
 
-function moveSpriteTowardsTargetIfHungryOrFertile(sprite, target) {
-  if (
-    sprite.hunger < sprite.totalHunger * 0.5 ||
-    (sprite.isFertile && target.isFertile)
-  ) {
-    // If right, move left (negative)
-    if (sprite.position._x > target.position._x) {
-      if (sprite.velocity._x > 0) {
-        sprite.velocity._x *= -1;
-      }
-    } else {
-      if (sprite.velocity._x < 0) {
-        sprite.velocity._x *= -1;
-      }
+function moveSpriteTowardsTarget(sprite, target) {
+  // If right, move left (negative)
+  if (sprite.position._x > target.position._x) {
+    if (sprite.velocity._x > 0) {
+      sprite.velocity._x *= -1;
     }
-    // If below, move up (negative)
-    if (sprite.position._y > target.position._y) {
-      if (sprite.velocity._y > 0) {
-        sprite.velocity._y *= -1;
-      }
-    } else {
-      if (sprite.velocity._y < 0) {
-        sprite.velocity._y *= -1;
-      }
+  } else {
+    if (sprite.velocity._x < 0) {
+      sprite.velocity._x *= -1;
+    }
+  }
+  // If below, move up (negative)
+  if (sprite.position._y > target.position._y) {
+    if (sprite.velocity._y > 0) {
+      sprite.velocity._y *= -1;
+    }
+  } else {
+    if (sprite.velocity._y < 0) {
+      sprite.velocity._y *= -1;
     }
   }
 }
@@ -138,10 +133,12 @@ export function spriteSearchAndDestroy(sprite) {
       if (isCollide(spriteSight, otherSprite)) {
         //If otherSprite weaker
         if (
-          sprite.damage > otherSprite.defence &&
-          sprite.health > otherSprite.health
+          (sprite.health > otherSprite.health &&
+            sprite.damage > otherSprite.defence &&
+            sprite.hunger < sprite.totalHunger * 0.5) ||
+          (sprite.isFertile && otherSprite.isFertile)
         ) {
-          moveSpriteTowardsTargetIfHungryOrFertile(sprite, otherSprite);
+          moveSpriteTowardsTarget(sprite, otherSprite);
         } else {
           moveSpriteAwayFromTarget(sprite, otherSprite);
         }
@@ -160,7 +157,9 @@ export function createSprite(
   totalHunger,
   health,
   damage,
-  defence
+  defence,
+  sight,
+  stealth
 ) {
   //TODO: Fix size being anything other than 25 being selectable and collide-able
   spriteUniqueId += 1;
@@ -187,8 +186,8 @@ export function createSprite(
     totalHealth: health, //1000
     damage: damage, //1
     defence: defence, //0
-    sight: 50,
-    stealth: 0,
+    sight: sight,
+    stealth: stealth,
     diseased: { diseased: false, damage: 0 },
     isColliding: false,
     onUp: function() {
@@ -212,7 +211,9 @@ export function createSprites() {
       gTotalHunger,
       gHealth,
       gDamage,
-      gDefence
+      gDefence,
+      gSight,
+      gStealth
     );
   }
 }
@@ -238,8 +239,10 @@ export function breed(spriteA, spriteB) {
     getRandomInt(1, 2) === 1 ? spriteA.totalHealth : spriteB.totalHealth;
   sprite.damage = getRandomInt(1, 2) === 1 ? spriteA.damage : spriteB.damage;
   sprite.defence = getRandomInt(1, 2) === 1 ? spriteA.defence : spriteB.defence;
+  sprite.sight = getRandomInt(1, 2) === 1 ? spriteA.sight : spriteB.sight;
+  sprite.stealth = getRandomInt(1, 2) === 1 ? spriteA.stealth : spriteB.stealth;
   //TODO: Add colour that changes slightly from the parents
-  const randomMutation = getRandomInt(1, 8);
+  const randomMutation = getRandomInt(1, 10);
   if (randomMutation === 1) {
     if (getRandomInt(1, 2) === 1) {
       sprite.size += 5;
@@ -304,6 +307,22 @@ export function breed(spriteA, spriteB) {
         sprite.totalFertilityProgress -= 10;
       }
     }
+  } else if (randomMutation === 9) {
+    if (getRandomInt(1, 2) === 1) {
+      sprite.sight += 1;
+    } else {
+      if (sprite.sight > 0) {
+        sprite.sight -= 1;
+      }
+    }
+  } else if (randomMutation === 10) {
+    if (getRandomInt(1, 2) === 1) {
+      sprite.stealth += 1;
+    } else {
+      if (sprite.stealth > 0) {
+        sprite.stealth -= 1;
+      }
+    }
   }
 
   createSprite(
@@ -316,7 +335,9 @@ export function breed(spriteA, spriteB) {
     sprite.totalHunger,
     sprite.totalHealth,
     sprite.damage,
-    sprite.defence
+    sprite.defence,
+    sprite.sight,
+    sprite.stealth
   );
   spriteA.isFertile = false;
   spriteB.isFertile = false;

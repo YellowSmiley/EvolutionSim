@@ -22,10 +22,11 @@ function displaySpriteProps(sprite) {
     "totalHealth",
     "damage",
     "defence",
-    "sight"
+    "sight",
+    "stealth"
   ];
   Object.entries(sprite).map(prop => {
-    for (let i = 0; i < shownProps.length - 1; i++) {
+    for (let i = 0; i < shownProps.length; i++) {
       if (prop[0] === shownProps[i]) {
         let li = document.createElement("li");
         let liContent = document.createTextNode(prop[0] + ": " + prop[1]);

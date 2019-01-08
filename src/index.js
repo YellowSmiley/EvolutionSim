@@ -10,11 +10,10 @@ import {
 import { clearSelectedSpriteAndInterval } from "./spriteSelector";
 
 // Globals
-//TODO: Add sight and stealth to form, creation and breeding
 const errorText = document.getElementById("errorText");
 const sim = document.getElementById("sim");
 const form = document.getElementById("form");
-window.amountToSpawn = 5;
+window.amountToSpawn = 10;
 window.gSize = 25;
 window.gSpeed = 4;
 window.gFertilityRate = 1;
@@ -23,6 +22,8 @@ window.gTotalHunger = 2000;
 window.gHealth = 2000;
 window.gDamage = 10;
 window.gDefence = 5;
+window.gSight = 25;
+window.gStealth = 0;
 
 document.getElementById("amount").value = amountToSpawn;
 document.getElementById("size").value = gSize;
@@ -33,6 +34,8 @@ document.getElementById("totalHunger").value = gTotalHunger;
 document.getElementById("health").value = gHealth;
 document.getElementById("damage").value = gDamage;
 document.getElementById("defence").value = gDefence;
+document.getElementById("sight").value = gSight;
+document.getElementById("stealth").value = gStealth;
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -52,6 +55,8 @@ document.addEventListener(
     document.querySelector('input[id="health"]').onchange = changeEventHandler;
     document.querySelector('input[id="damage"]').onchange = changeEventHandler;
     document.querySelector('input[id="defence"]').onchange = changeEventHandler;
+    document.querySelector('input[id="sight"]').onchange = changeEventHandler;
+    document.querySelector('input[id="stealth"]').onchange = changeEventHandler;
   },
   false
 );
@@ -84,7 +89,9 @@ window.startGame = function() {
         sprite.update();
         spriteCanvasBoundaryChecker(sprite);
         spritePropsChecker(sprite);
-        spriteSearchAndDestroy(sprite);
+        if (sprite.sight > 0) {
+          spriteSearchAndDestroy(sprite);
+        }
       });
 
       sprites.forEach((sprite, i) => {
