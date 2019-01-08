@@ -73,25 +73,30 @@ export function spritePropsChecker(sprite) {
   }
 }
 
-function moveSpriteTowardsTarget(sprite, target) {
-  // If right, move left (negative)
-  if (sprite.position._x > target.position._x) {
-    if (sprite.velocity._x > 0) {
-      sprite.velocity._x *= -1;
+function moveSpriteTowardsTargetIfHungryOrFertile(sprite, target) {
+  if (
+    sprite.hunger < sprite.totalHunger * 0.5 ||
+    (sprite.isFertile && target.isFertile)
+  ) {
+    // If right, move left (negative)
+    if (sprite.position._x > target.position._x) {
+      if (sprite.velocity._x > 0) {
+        sprite.velocity._x *= -1;
+      }
+    } else {
+      if (sprite.velocity._x < 0) {
+        sprite.velocity._x *= -1;
+      }
     }
-  } else {
-    if (sprite.velocity._x < 0) {
-      sprite.velocity._x *= -1;
-    }
-  }
-  // If below, move up (negative)
-  if (sprite.position._y > target.position._y) {
-    if (sprite.velocity._y > 0) {
-      sprite.velocity._y *= -1;
-    }
-  } else {
-    if (sprite.velocity._y < 0) {
-      sprite.velocity._y *= -1;
+    // If below, move up (negative)
+    if (sprite.position._y > target.position._y) {
+      if (sprite.velocity._y > 0) {
+        sprite.velocity._y *= -1;
+      }
+    } else {
+      if (sprite.velocity._y < 0) {
+        sprite.velocity._y *= -1;
+      }
     }
   }
 }
@@ -132,8 +137,11 @@ export function spriteSearchAndDestroy(sprite) {
       //If Seen
       if (isCollide(spriteSight, otherSprite)) {
         //If otherSprite weaker
-        if (sprite.damage > otherSprite.defence) {
-          moveSpriteTowardsTarget(sprite, otherSprite);
+        if (
+          sprite.damage > otherSprite.defence &&
+          sprite.health > otherSprite.health
+        ) {
+          moveSpriteTowardsTargetIfHungryOrFertile(sprite, otherSprite);
         } else {
           moveSpriteAwayFromTarget(sprite, otherSprite);
         }
