@@ -4,15 +4,17 @@ import {
   collisionDetection,
   spriteCanvasBoundaryChecker,
   spritePropsChecker,
+  spriteSearchAndDestroy,
   createSprites
 } from "./spriteMethods";
 import { clearSelectedSpriteAndInterval } from "./spriteSelector";
 
 // Globals
+//TODO: Add sight and stealth to form, creation and breeding
 const errorText = document.getElementById("errorText");
 const sim = document.getElementById("sim");
 const form = document.getElementById("form");
-window.amountToSpawn = 50;
+window.amountToSpawn = 5;
 window.gSize = 25;
 window.gSpeed = 4;
 window.gFertilityRate = 1;
@@ -82,6 +84,7 @@ window.startGame = function() {
         sprite.update();
         spriteCanvasBoundaryChecker(sprite);
         spritePropsChecker(sprite);
+        spriteSearchAndDestroy(sprite);
       });
 
       sprites.forEach((sprite, i) => {

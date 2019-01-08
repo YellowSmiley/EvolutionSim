@@ -73,6 +73,75 @@ export function spritePropsChecker(sprite) {
   }
 }
 
+function moveSpriteTowardsTarget(sprite, target) {
+  // If right, move left (negative)
+  if (sprite.position._x > target.position._x) {
+    if (sprite.velocity._x > 0) {
+      sprite.velocity._x *= -1;
+    }
+  } else {
+    if (sprite.velocity._x < 0) {
+      sprite.velocity._x *= -1;
+    }
+  }
+  // If below, move up (negative)
+  if (sprite.position._y > target.position._y) {
+    if (sprite.velocity._y > 0) {
+      sprite.velocity._y *= -1;
+    }
+  } else {
+    if (sprite.velocity._y < 0) {
+      sprite.velocity._y *= -1;
+    }
+  }
+}
+
+function moveSpriteAwayFromTarget(sprite, target) {
+  // If right, move right (positive)
+  if (sprite.position._x > target.position._x) {
+    if (sprite.velocity._x < 0) {
+      sprite.velocity._x *= -1;
+    }
+  } else {
+    if (sprite.velocity._x > 0) {
+      sprite.velocity._x *= -1;
+    }
+  }
+  // If below, move down (positive)
+  if (sprite.position._y > target.position._y) {
+    if (sprite.velocity._y < 0) {
+      sprite.velocity._y *= -1;
+    }
+  } else {
+    if (sprite.velocity._y > 0) {
+      sprite.velocity._y *= -1;
+    }
+  }
+}
+
+export function spriteSearchAndDestroy(sprite) {
+  for (let i = 0; i < sprites.length; i++) {
+    const otherSprite = sprites[i];
+    if (otherSprite !== sprite) {
+      const spriteSight = {
+        x: sprite.x + sprite.width / 2,
+        y: sprite.y + sprite.height / 2,
+        height: sprite.sight * 2 - otherSprite.stealth,
+        width: sprite.sight * 2 - otherSprite.stealth
+      };
+      //If Seen
+      if (isCollide(spriteSight, otherSprite)) {
+        //If otherSprite weaker
+        if (sprite.damage > otherSprite.defence) {
+          moveSpriteTowardsTarget(sprite, otherSprite);
+        } else {
+          moveSpriteAwayFromTarget(sprite, otherSprite);
+        }
+      }
+    }
+  }
+}
+
 export function createSprite(
   x,
   y,
@@ -110,7 +179,8 @@ export function createSprite(
     totalHealth: health, //1000
     damage: damage, //1
     defence: defence, //0
-    sight: 0,
+    sight: 50,
+    stealth: 0,
     diseased: { diseased: false, damage: 0 },
     isColliding: false,
     onUp: function() {
