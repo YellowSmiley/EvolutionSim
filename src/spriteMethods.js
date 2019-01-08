@@ -43,6 +43,11 @@ export function spritePropsChecker(sprite) {
   //TODO: Fix fertilityRate > default - Should be fixed (check)
   //TODO: Fix fertilityProgress > default - Should be fixed (check)
   //TODO: Fix healing when defence higher than damage - Should be fixed (check)
+  if (sprite.hunger >= sprite.totalHunger * 0.9) {
+    if (sprite.health < sprite.totalHealth) {
+      sprite.health += 1;
+    }
+  }
   if (sprite.health <= 0) {
     if (sprite.interval) {
       clearSelectedSpriteAndInterval(sprite);
