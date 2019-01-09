@@ -1,5 +1,13 @@
+function checkInp(value) {
+  if (isNaN(value)) {
+    alert("Input must be a number");
+    return false;
+  } else {
+    return true;
+  }
+}
+
 export function changeEventHandler(event) {
-  // TODO: Add validation and sanitisation to entered values
   if (!event.target.value) {
     alert("All fields must have a value");
     if (this.id === "amount") {
@@ -27,27 +35,49 @@ export function changeEventHandler(event) {
     }
   } else {
     if (this.id === "amount") {
-      amountToSpawn = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (amountToSpawn = parseInt(event.target.value, 10))
+        : (event.target.value = amountToSpawn);
     } else if (this.id === "size") {
-      gSize = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gSize = parseInt(event.target.value, 10))
+        : (event.target.value = gSize);
     } else if (this.id === "speed") {
-      gSpeed = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gSpeed = parseInt(event.target.value, 10))
+        : (event.target.value = gSpeed);
     } else if (this.id === "fertilityRate") {
-      gFertilityRate = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gFertilityRate = parseInt(event.target.value, 10))
+        : (event.target.value = gFertilityRate);
     } else if (this.id === "fertilityProgress") {
-      gFertilityProgress = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gFertilityProgress = parseInt(event.target.value, 10))
+        : (event.target.value = gFertilityProgress);
     } else if (this.id === "totalHunger") {
-      gTotalHunger = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gTotalHunger = parseInt(event.target.value, 10))
+        : (event.target.value = gTotalHunger);
     } else if (this.id === "health") {
-      gHealth = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gHealth = parseInt(event.target.value, 10))
+        : (event.target.value = gHealth);
     } else if (this.id === "damage") {
-      gDamage = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gDamage = parseInt(event.target.value, 10))
+        : (event.target.value = gDamage);
     } else if (this.id === "defence") {
-      gDefence = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gDefence = parseInt(event.target.value, 10))
+        : (event.target.value = gDefence);
     } else if (this.id === "sight") {
-      gSight = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gSight = parseInt(event.target.value, 10))
+        : (event.target.value = gSight);
     } else if (this.id === "stealth") {
-      gStealth = parseInt(event.target.value, 10);
+      checkInp(event.target.value)
+        ? (gStealth = parseInt(event.target.value, 10))
+        : (event.target.value = gStealth);
     }
   }
 }
