@@ -40,9 +40,6 @@ export function spriteCanvasBoundaryChecker(sprite) {
 }
 
 export function spritePropsChecker(sprite) {
-  //TODO: Fix fertilityRate > default - Should be fixed (check)
-  //TODO: Fix fertilityProgress > default - Should be fixed (check)
-  //TODO: Fix healing when defence higher than damage - Should be fixed (check)
   if (sprite.hunger >= sprite.totalHunger * 0.9) {
     if (sprite.health < sprite.totalHealth) {
       sprite.health += 1;
@@ -161,7 +158,6 @@ export function createSprite(
   sight,
   stealth
 ) {
-  //TODO: Fix size being anything other than 25 being selectable and collide-able
   spriteUniqueId += 1;
   let sprite = kontra.sprite({
     id: spriteUniqueId,
@@ -202,8 +198,8 @@ export function createSprites() {
   const canvasSize = { x: 800, y: 600 };
   for (let i = 0; i < amountToSpawn; i++) {
     createSprite(
-      Math.floor(Math.random() * canvasSize.x),
-      Math.floor(Math.random() * canvasSize.y),
+      getRandomInt(1, canvasSize.x - 1),
+      getRandomInt(1, canvasSize.y - 1),
       gSize,
       gSpeed,
       gFertilityRate,

@@ -1,5 +1,5 @@
 export function changeEventHandler(event) {
-  // You can use “this” to refer to the selected element.
+  // TODO: Add validation and sanitisation to entered values
   if (!event.target.value) {
     alert("All fields must have a value");
     if (this.id === "amount") {
@@ -27,27 +27,27 @@ export function changeEventHandler(event) {
     }
   } else {
     if (this.id === "amount") {
-      amountToSpawn = event.target.value;
+      amountToSpawn = parseInt(event.target.value, 10);
     } else if (this.id === "size") {
-      gSize = event.target.value;
+      gSize = parseInt(event.target.value, 10);
     } else if (this.id === "speed") {
-      gSpeed = event.target.value;
+      gSpeed = parseInt(event.target.value, 10);
     } else if (this.id === "fertilityRate") {
-      gFertilityRate = event.target.value;
+      gFertilityRate = parseInt(event.target.value, 10);
     } else if (this.id === "fertilityProgress") {
-      gFertilityProgress = event.target.value;
+      gFertilityProgress = parseInt(event.target.value, 10);
     } else if (this.id === "totalHunger") {
-      gTotalHunger = event.target.value;
+      gTotalHunger = parseInt(event.target.value, 10);
     } else if (this.id === "health") {
-      gHealth = event.target.value;
+      gHealth = parseInt(event.target.value, 10);
     } else if (this.id === "damage") {
-      gDamage = event.target.value;
+      gDamage = parseInt(event.target.value, 10);
     } else if (this.id === "defence") {
-      gDefence = event.target.value;
+      gDefence = parseInt(event.target.value, 10);
     } else if (this.id === "sight") {
-      gSight = event.target.value;
+      gSight = parseInt(event.target.value, 10);
     } else if (this.id === "stealth") {
-      gStealth = event.target.value;
+      gStealth = parseInt(event.target.value, 10);
     }
   }
 }
