@@ -14,7 +14,7 @@ It has a simple UI which allows users to pause, restart, change starting paramet
 
 ## Features
 
-Select starting parameters for initial sprites (experimental).
+Select starting parameters for initial sprites.
 
 Each sprite has unique properties and can pass on its traits to their children.
 
